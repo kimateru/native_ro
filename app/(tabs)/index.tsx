@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
-import { supabase } from "../backend/supabase";
-import ProductItem from "../components/ProductItem";
+import { useCallback, useEffect, useState } from "react";
+import { supabase } from "../../backend/supabase";
+import ProductItem from "../../components/ProductItem";
 import { FlatList, ActivityIndicator } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useFocusEffect } from "expo-router";
 
 export default function Index() {
 
@@ -15,6 +16,8 @@ export default function Index() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+
+
 
 
   async function fetchProducts() {
@@ -32,6 +35,12 @@ export default function Index() {
     fetchProducts();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchProducts();
+    }, [])
+  )
+  
   return (
     <SafeAreaView className="flex-1 bg-gray-200">
       {
@@ -41,7 +50,7 @@ export default function Index() {
           <FlatList
             data={products}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <ProductItem product={item} />}
+            renderItem={({ item }) => <ProductItem product={item} onDelete={fetchProducts} />}
             contentContainerStyle={{ padding: 16 }}
           />
         )
