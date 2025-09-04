@@ -1,29 +1,33 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { Tabs } from "expo-router";
+import { icons } from "@/constants/icons";
+import { Image, Text, View } from "react-native";
+import './global.css';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
-  }
-
+const TabIcon = ({ focused, icon, title }: { focused: boolean, icon: any, title: string }) => {
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+    <View className="flex-1 items-center justify-center mt-3">
+      <Image source={icon} tintColor={focused ? "red" : "black"} className="w-6 h-6" />
+      <Text className={`text-[${focused ? "red" : "black"}] text-lg text-center w-full`}>{title}</Text>
+    </View>
+  )
 }
+
+const TabsLayout = () => {
+  return (
+    <Tabs screenOptions={{
+      headerShown: false,
+      tabBarShowLabel: false,
+      tabBarStyle: {
+        backgroundColor: "#fefefe",
+        position: "absolute",
+        minHeight: 85,
+      }
+    }}>
+      <Tabs.Screen name="index" options={{ title: "Home", tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={icons.home} title="Home" /> }} />
+      <Tabs.Screen name="favorites" options={{ title: "Favorites", tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={icons.favorites} title="Favorites" /> }} />
+      <Tabs.Screen name="profile" options={{ title: "Profile", tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={icons.profile} title="Profile" /> }} />
+    </Tabs>
+  )
+}
+
+export default TabsLayout;
